@@ -6,7 +6,8 @@
     "composite": true,
     "rootDir": "../",
     "lib": ["ESNext", "dom"],
-    "types": ["nightwatch"]
+    "types": ["nightwatch"],
+    "noImplicitThis": false
   },
   "include": ["../node_modules/@nightwatch/**/*", "../src/components/**/*", "../tests/e2e/**/*"],
   "ts-node": {

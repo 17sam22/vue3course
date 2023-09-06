@@ -1,27 +1,108 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <div>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+      <template v-if="this.question">
+
+        <h1 v-html="this.question">
+        </h1>
+
+        <template v-for="(answer, index) in this.answers" v-bind:key="index">      
+          <input 
+          type="radio" 
+          name="options" 
+          :value="answer"
+          v-model="this.chosen_answer">
+
+          <label v-html="answer"></label><br>
+        </template>
+        <button @click="this.submitAnswer" class="send" type="button">Send</button>
+      </template>
+
+
+
+      
+
     </div>
-  </header>
-
-  <RouterView />
 </template>
 
-<style scoped>
-header {
+<script lang="ts">
+export default {
+  name: 'App',
+  
+  data() {
+    return {  
+        question: undefined,
+        incorrectAnswers: undefined,
+        correctAnswers: undefined,
+        chosen_answer: undefined
+      }
+
+  },
+  computed: { 
+    answers() {
+      var answers = JSON.parse(JSON.stringify(this.incorrectAnswers));
+      answers.splice(Math.round(Math.random() * answers.length) , 0, this.correctAnswers);
+      return answers;
+    }
+  },
+  methods: {
+    submitAnswer() {
+      if (!this.chosen_answer) {
+        alert('Pick one of the options');
+      } else {
+        if (this.chosen_answer == this.correctAnswers) {
+
+        } else {
+          
+        }
+      }
+    }
+  },
+  created() {
+    this.axios
+    .get('https://opentdb.com/api.php?amount=1')
+    .then((response: { data: { results: {
+      question: any;
+      incorrect_answers: any; correct_answer: any; 
+    }[]; }; }) => {
+      this.question = response.data.results[0].question;
+      this.incorrectAnswers = response.data.results[0].incorrect_answers;
+      this.correctAnswers = response.data.results[0].correct_answer;
+    })
+  }
+}
+</script>
+
+<style lang="scss">
+
+#app {
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smotthing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin: 60px auto;
+    max-width: 960px;
+
+    input[type=radio] {
+      margin: 12px 4px;
+    }
+
+    button.send {
+      margin-top: 12px;
+      height: 40px;
+      min-width: 120px;
+      padding: 0 16px;
+      color: #fff;
+      background-color: #1867c0;
+      border: 1px solid #1867c0;
+      cursor: pointer;
+    }
+
+  }
+
+/* header {
   line-height: 1.5;
   max-height: 100vh;
 }
@@ -44,9 +125,9 @@ nav a.router-link-exact-active {
 
 nav a.router-link-exact-active:hover {
   background-color: transparent;
-}
+} */
 
-nav a {
+/* nav a {
   display: inline-block;
   padding: 0 1rem;
   border-left: 1px solid var(--color-border);
@@ -54,9 +135,9 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
+} */
 
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
@@ -81,5 +162,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+} */
 </style>
