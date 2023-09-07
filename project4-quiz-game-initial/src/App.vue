@@ -2,6 +2,9 @@
 
     <div>
 
+
+      <ScoreBoard />
+
       <template v-if="this.question">
 
         <h1 v-html="this.question">
@@ -9,6 +12,7 @@
 
         <template v-for="(answer, index) in this.answers" v-bind:key="index">      
           <input 
+          :disabled="this.answerSubmitted"
           type="radio" 
           name="options" 
           :value="answer"
@@ -16,7 +20,17 @@
 
           <label v-html="answer"></label><br>
         </template>
-        <button @click="this.submitAnswer" class="send" type="button">Send</button>
+        <button v-if="!this.answerSubmitted" @click="this.submitAnswer()" class="send" type="button">Send</button>
+
+        <section class="result" v-if="this.answerSubmitted">
+          <template v-if="this.chosen_answer == this.correctAnswer">
+            <h4>&#9989; Congratulations, the answer "{{this.correctAnswer}}" is correct.</h4>
+          </template>
+          <template v-else>
+            <h4>&#10060;  I'm sorry, you picked the wrong answer. The correct is "{{this.correctAnswer}}".</h4>
+          </template>
+          <button @click="this.getNewQuestion()" class="send" type="button">Next question</button>
+        </section>
       </template>
 
 
@@ -27,15 +41,23 @@
 </template>
 
 <script lang="ts">
+
+import ScoreBoard from '@/components/ScoreBoard.vue'
+
 export default {
+
   name: 'App',
-  
+  components: {
+    ScoreBoard
+  },
+
   data() {
     return {  
         question: undefined,
         incorrectAnswers: undefined,
         correctAnswers: undefined,
-        chosen_answer: undefined
+        chosen_answer: undefined,
+        answerSubmitted: false
       }
 
   },
@@ -51,16 +73,20 @@ export default {
       if (!this.chosen_answer) {
         alert('Pick one of the options');
       } else {
+        this.answerSubmitted = true;
         if (this.chosen_answer == this.correctAnswers) {
-
+          console
         } else {
-          
+
         }
       }
-    }
-  },
-  created() {
-    this.axios
+    }, 
+
+    getNewQuestion() {
+      this.answerSubmitted = false;
+      this.chosen_answer = undefined;
+      this.question = undefined;
+      this.axios
     .get('https://opentdb.com/api.php?amount=1')
     .then((response: { data: { results: {
       question: any;
@@ -70,6 +96,11 @@ export default {
       this.incorrectAnswers = response.data.results[0].incorrect_answers;
       this.correctAnswers = response.data.results[0].correct_answer;
     })
+    }
+
+  },
+  created() {
+    this.getNewQuestion();
   }
 }
 </script>
