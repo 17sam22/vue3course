@@ -2,8 +2,7 @@
 
     <div>
 
-
-      <ScoreBoard />
+      <ScoreBoard :winCount="this.winCount" :loseCount="this.loseCount" />
 
       <template v-if="this.question">
 
@@ -23,7 +22,7 @@
         <button v-if="!this.answerSubmitted" @click="this.submitAnswer()" class="send" type="button">Send</button>
 
         <section class="result" v-if="this.answerSubmitted">
-          <template v-if="this.chosen_answer == this.correctAnswer">
+          <template v-if="this.chosen_answer === this.correctAnswer">
             <h4>&#9989; Congratulations, the answer "{{this.correctAnswer}}" is correct.</h4>
           </template>
           <template v-else>
@@ -32,10 +31,6 @@
           <button @click="this.getNewQuestion()" class="send" type="button">Next question</button>
         </section>
       </template>
-
-
-
-      
 
     </div>
 </template>
@@ -57,7 +52,9 @@ export default {
         incorrectAnswers: undefined,
         correctAnswers: undefined,
         chosen_answer: undefined,
-        answerSubmitted: false
+        answerSubmitted: false,
+        winCount: 0,
+        loseCount: 0
       }
 
   },
@@ -75,9 +72,9 @@ export default {
       } else {
         this.answerSubmitted = true;
         if (this.chosen_answer == this.correctAnswers) {
-          console
+          this.winCount++;
         } else {
-
+            this.loseCount++;
         }
       }
     }, 
@@ -130,6 +127,19 @@ export default {
       border: 1px solid #1867c0;
       cursor: pointer;
     }
+
+    section.score {
+        border-bottom: 1px solid black;
+        padding: 24px;
+        font-size: 18px;
+
+        span {
+            padding: 8px;
+            font-weight: bold;
+            border: 1px solid black;
+        }
+    }
+
 
   }
 
